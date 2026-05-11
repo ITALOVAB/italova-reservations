@@ -42,8 +42,9 @@ export default function App() {
     heure: null,
     espace: null,
     couverts: null,
-    enfants: false,
+    enfants: 0,
     animaux: false,
+    commentaire: "",
     nom: "",
     prenom: "",
     telephone: "",
@@ -85,6 +86,8 @@ export default function App() {
       couverts: form.couverts,
       enfants: form.enfants,
       animaux: form.animaux,
+      enfants_nb: form.enfants,
+      commentaire: form.commentaire.trim(),
       nom: form.nom.trim(),
       prenom: form.prenom.trim(),
       telephone: form.telephone.trim(),
@@ -96,7 +99,7 @@ export default function App() {
   };
 
   const reset = () => {
-    setForm({ date:null, service:null, heure:null, espace:null, couverts:null, enfants:false, animaux:false, nom:"", prenom:"", telephone:"" });
+    setForm({ date:null, service:null, heure:null, espace:null, couverts:null, enfants:0, animaux:false, commentaire:"", nom:"", prenom:"", telephone:"" });
     setStep("date");
     setSuccess(false);
     setError(null);
@@ -266,24 +269,42 @@ export default function App() {
             👥 Pour plus de 10 personnes, appelez-nous au <strong style={{color:"#FF2D78"}}>04 91 75 18 06</strong>
           </div>
 
-          {/* Enfants & Animaux */}
-          <div style={{ display:"flex", gap:8, marginBottom:20 }}>
-            {[
-              { key:"enfants", label:"👶 Enfants", desc:"Chaise haute disponible" },
-              { key:"animaux", label:"🐾 Animaux", desc:"Acceptés en terrasse" },
-            ].map(opt => (
-              <button key={opt.key} onClick={() => update(opt.key, !form[opt.key])} style={{
-                flex:1, background: form[opt.key] ? "linear-gradient(135deg,#d4195a,#FF2D78)" : "#fff",
-                border:`1px solid ${form[opt.key]?"#FF2D78":"#e0d4c4"}`,
-                borderRadius:10, padding:"12px 8px", cursor:"pointer",
-                color: form[opt.key]?"#fff":"#1a0f08",
-                fontFamily:"inherit", textAlign:"center"
-              }}>
-                <div style={{ fontSize:20, marginBottom:4 }}>{opt.label.split(" ")[0]}</div>
-                <div style={{ fontSize:12, fontWeight:700 }}>{opt.label.split(" ")[1]}</div>
-                <div style={{ fontSize:10, opacity:0.8, marginTop:2 }}>{opt.desc}</div>
-              </button>
-            ))}
+          {/* Enfants */}
+          <div style={{ background:"#fff", border:"1px solid #e0d4c4", borderRadius:10, padding:"12px 14px", marginBottom:10 }}>
+            <div style={{ fontSize:12, fontWeight:700, color:"#1a0f08", marginBottom:8 }}>👶 Enfants de moins de 12 ans</div>
+            <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+              <button onClick={() => update("enfants", Math.max(0, form.enfants - 1))} style={{ width:34, height:34, borderRadius:8, background:"#f5ede0", border:"1px solid #e0d4c4", color:"#1a0f08", fontSize:18, cursor:"pointer", fontFamily:"inherit", lineHeight:1 }}>−</button>
+              <div style={{ flex:1, textAlign:"center" }}>
+                <span style={{ fontSize:22, fontWeight:800, color: form.enfants > 0 ? "#FF2D78" : "#9a8575" }}>{form.enfants}</span>
+                <span style={{ fontSize:12, color:"#9a8575", marginLeft:6 }}>enfant{form.enfants > 1 ? "s" : ""}</span>
+              </div>
+              <button onClick={() => update("enfants", form.enfants + 1)} style={{ width:34, height:34, borderRadius:8, background:"#f5ede0", border:"1px solid #e0d4c4", color:"#1a0f08", fontSize:18, cursor:"pointer", fontFamily:"inherit", lineHeight:1 }}>+</button>
+            </div>
+          </div>
+
+          {/* Animaux */}
+          <div style={{ marginBottom:10 }}>
+            <button onClick={() => update("animaux", !form.animaux)} style={{
+              width:"100%", background: form.animaux ? "linear-gradient(135deg,#d4195a,#FF2D78)" : "#fff",
+              border:`1px solid ${form.animaux?"#FF2D78":"#e0d4c4"}`,
+              borderRadius:10, padding:"12px", cursor:"pointer",
+              color: form.animaux?"#fff":"#1a0f08",
+              fontFamily:"inherit", textAlign:"left", display:"flex", alignItems:"center", gap:10
+            }}>
+              <span style={{ fontSize:22 }}>🐾</span>
+              <div>
+                <div style={{ fontSize:13, fontWeight:700 }}>Animal de compagnie</div>
+                <div style={{ fontSize:11, opacity:0.8 }}>Acceptés en terrasse</div>
+              </div>
+              <span style={{ marginLeft:"auto", fontSize:16 }}>{form.animaux ? "✓" : ""}</span>
+            </button>
+          </div>
+
+          {/* Commentaire */}
+          <div style={{ marginBottom:20 }}>
+            <textarea placeholder="Précisions : ombre souhaité, poussette, fauteuil roulant, allergie..." value={form.commentaire}
+              onChange={e => update("commentaire", e.target.value)} rows={3}
+              style={{ width:"100%", background:"#fff", border:"1px solid #e0d4c4", borderRadius:10, padding:"10px 13px", color:"#1a0f08", fontSize:13, outline:"none", resize:"none", boxSizing:"border-box", fontFamily:"inherit" }}/>
           </div>
 
           <button onClick={() => setStep("infos")} disabled={!form.couverts} style={{
@@ -302,7 +323,7 @@ export default function App() {
           <div style={{ fontSize:18, fontWeight:800, marginBottom:2 }}>Vos coordonnées</div>
           <div style={{ fontSize:13, color:"#7a6555", marginBottom:16 }}>
             {formatDate(form.date)} · {form.heure} · {form.espace} · {form.couverts} couvert{form.couverts>1?"s":""}
-            {form.enfants ? " · 👶" : ""}{form.animaux ? " · 🐾" : ""}
+            {form.enfants > 0 ? ` · 👶 ${form.enfants} enfant${form.enfants > 1 ? "s" : ""}` : ""}{form.animaux ? " · 🐾" : ""}
           </div>
 
           {[

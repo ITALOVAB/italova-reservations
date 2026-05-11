@@ -271,7 +271,8 @@ export default function App() {
 
           {/* Enfants */}
           <div style={{ background:"#fff", border:"1px solid #e0d4c4", borderRadius:10, padding:"12px 14px", marginBottom:10 }}>
-            <div style={{ fontSize:12, fontWeight:700, color:"#1a0f08", marginBottom:8 }}>👶 Enfants de moins de 12 ans</div>
+            <div style={{ fontSize:12, fontWeight:700, color:"#1a0f08", marginBottom:4 }}>👶 Dont enfants de moins de 12 ans</div>
+            <div style={{ fontSize:11, color:"#9a8575", marginBottom:8 }}>Chaise haute disponible sur demande</div>
             <div style={{ display:"flex", alignItems:"center", gap:10 }}>
               <button onClick={() => update("enfants", Math.max(0, form.enfants - 1))} style={{ width:34, height:34, borderRadius:8, background:"#f5ede0", border:"1px solid #e0d4c4", color:"#1a0f08", fontSize:18, cursor:"pointer", fontFamily:"inherit", lineHeight:1 }}>−</button>
               <div style={{ flex:1, textAlign:"center" }}>

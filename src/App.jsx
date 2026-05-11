@@ -49,8 +49,22 @@ export default function App() {
     telephone: "",
   });
   const [loading, setLoading] = useState(false);
+  const [occupiedSlots, setOccupiedSlots] = useState({});
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
+
+  const fetchOccupied = async (date) => {
+    if (!date) return;
+    const { data } = await supabase
+      .from("reservations")
+      .select("heure")
+      .eq("date", formatDateISO(date));
+    if (data) {
+      const counts = {};
+      data.forEach(r => { counts[r.heure] = (counts[r.heure] || 0) + 1; });
+      setOccupiedSlots(counts);
+    }
+  };
 
   const dates = getDatesDisponibles();
 
@@ -146,7 +160,7 @@ export default function App() {
           <div style={{ fontSize:13, color:"#7a6555", marginBottom:16 }}>Disponible du mardi au samedi, jusqu'à 15 jours à l'avance</div>
           <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
             {dates.map((d, i) => (
-              <button key={i} onClick={() => { update("date", d); setStep("service"); }} style={{
+              <button key={i} onClick={() => { update("date", d); fetchOccupied(d); setStep("service"); }} style={{
                 background: form.date && formatDateISO(form.date)===formatDateISO(d) ? "linear-gradient(135deg,#d4195a,#FF2D78)" : "#fff",
                 border: `1px solid ${form.date && formatDateISO(form.date)===formatDateISO(d) ? "#FF2D78" : "#e0d4c4"}`,
                 borderRadius:10, padding:"14px 16px", cursor:"pointer", textAlign:"left",
@@ -168,7 +182,7 @@ export default function App() {
           <div style={{ marginBottom:20 }}>
             <div style={{ fontSize:13, fontWeight:700, color:"#7a6555", marginBottom:8, textTransform:"uppercase", letterSpacing:"1px" }}>🌞 Midi — 12h à 13h45</div>
             <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:6 }}>
-              {CRENEAUX_MIDI.map(h => (
+              {CRENEAUX_MIDI.filter(h => (occupiedSlots[h] || 0) < 5).map(h => (
                 <button key={h} onClick={() => { update("heure", h); update("service", "midi"); setStep("espace"); }} style={{
                   background: form.heure===h ? "linear-gradient(135deg,#d4195a,#FF2D78)" : "#fff",
                   border:`1px solid ${form.heure===h?"#FF2D78":"#e0d4c4"}`,
@@ -184,7 +198,7 @@ export default function App() {
           <div>
             <div style={{ fontSize:13, fontWeight:700, color:"#7a6555", marginBottom:8, textTransform:"uppercase", letterSpacing:"1px" }}>🌙 Soir — 19h30 à 21h45</div>
             <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:6 }}>
-              {CRENEAUX_SOIR.map(h => (
+              {CRENEAUX_SOIR.filter(h => (occupiedSlots[h] || 0) < 5).map(h => (
                 <button key={h} onClick={() => { update("heure", h); update("service", "soir"); setStep("espace"); }} style={{
                   background: form.heure===h ? "linear-gradient(135deg,#d4195a,#FF2D78)" : "#fff",
                   border:`1px solid ${form.heure===h?"#FF2D78":"#e0d4c4"}`,
@@ -196,6 +210,12 @@ export default function App() {
             </div>
           </div>
 
+          {CRENEAUX_MIDI.filter(h => (occupiedSlots[h] || 0) < 5).length === 0 && CRENEAUX_SOIR.filter(h => (occupiedSlots[h] || 0) < 5).length === 0 && (
+            <div style={{ background:"rgba(255,45,120,0.06)", border:"1px solid rgba(255,45,120,0.2)", borderRadius:10, padding:"14px", textAlign:"center", fontSize:13, color:"#7a6555", marginBottom:16 }}>
+              😔 Tous les créneaux sont complets pour cette date.<br/>
+              <strong style={{color:"#FF2D78"}}>Appelez-nous pour vérifier les disponibilités.</strong>
+            </div>
+          )}
           <button onClick={() => setStep("date")} style={{ marginTop:20, background:"none", border:"none", color:"#FF2D78", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>← Retour</button>
         </>}
 
@@ -243,7 +263,7 @@ export default function App() {
           </div>
 
           <div style={{ background:"rgba(255,45,120,0.06)", border:"1px solid rgba(255,45,120,0.2)", borderRadius:10, padding:"12px 14px", marginBottom:16, fontSize:13, color:"#7a6555" }}>
-            👥 Pour plus de 10 personnes, appelez-nous au <strong style={{color:"#FF2D78"}}>04 XX XX XX XX</strong>
+            👥 Pour plus de 10 personnes, appelez-nous au <strong style={{color:"#FF2D78"}}>04 91 75 18 06</strong>
           </div>
 
           {/* Enfants & Animaux */}
@@ -333,4 +353,3 @@ export default function App() {
     </div>
   );
 }
-

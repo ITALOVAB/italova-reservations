@@ -290,12 +290,7 @@ export default function App() {
               </button>
             ))}
           </div>
-          {[{ name:"Salle" },{ name:"Véranda" },{ name:"Patio" }].filter(e => espacesDispos[e.name]).length === 0 && (
-            <div style={{ background:"rgba(255,45,120,0.06)", border:"1px solid rgba(255,45,120,0.2)", borderRadius:10, padding:"14px", textAlign:"center", fontSize:13, color:"#7a6555", marginBottom:16 }}>
-              😔 Aucun espace disponible pour ce service.<br/>
-              <strong style={{color:"#FF2D78"}}>Appelez-nous au 04 91 75 18 06</strong>
-            </div>
-          )}
+
           <button onClick={() => setStep("service")} style={{ marginTop:16, background:"none", border:"none", color:"#FF2D78", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>← Retour</button>
         </>}
 

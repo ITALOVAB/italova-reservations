@@ -98,6 +98,11 @@ export default function App() {
       setError("Merci de remplir tous les champs.");
       return;
     }
+    const tel = form.telephone.replace(/\s/g, "").replace(/\./g, "").replace(/-/g, "");
+    if (!/^0[1-9][0-9]{8}$/.test(tel)) {
+      setError("Veuillez saisir un numéro de téléphone valide (ex: 06 12 34 56 78).");
+      return;
+    }
     setLoading(true);
     setError(null);
     const { error: err } = await supabase.from("reservations").insert({

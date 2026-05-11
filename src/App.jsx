@@ -54,7 +54,7 @@ function formatDateISO(d) {
   return d.toISOString().split("T")[0];
 }
 
-const STEPS = ["date", "service", "espace", "couverts", "infos", "confirmation"];
+const STEPS = ["date", "service", "couverts", "infos", "confirmation"];
 
 export default function App() {
   const [step, setStep] = useState("date");
@@ -62,7 +62,7 @@ export default function App() {
     date: null,
     service: null,
     heure: null,
-    espace: null,
+    espace: "Salle",
     couverts: null,
     enfants: 0,
     animaux: false,
@@ -126,7 +126,7 @@ export default function App() {
   };
 
   const reset = () => {
-    setForm({ date:null, service:null, heure:null, espace:null, couverts:null, enfants:0, animaux:false, commentaire:"", nom:"", prenom:"", telephone:"" });
+    setForm({ date:null, service:null, heure:null, espace:"Salle", couverts:null, enfants:0, animaux:false, commentaire:"", nom:"", prenom:"", telephone:"" });
     setStep("date");
     setSuccess(false);
     setError(null);
@@ -141,7 +141,7 @@ export default function App() {
         <div style={{ fontSize:14, color:"rgba(255,255,255,0.7)", marginBottom:24, lineHeight:1.6 }}>
           Merci <strong style={{color:"#fff"}}>{form.prenom} {form.nom}</strong> !<br/>
           Nous vous attendons le <strong style={{color:"#fff"}}>{formatDate(form.date)}</strong><br/>
-          à <strong style={{color:"#fff"}}>{form.heure}</strong> — {form.espace} — {form.couverts} couvert{form.couverts>1?"s":""}
+          à <strong style={{color:"#fff"}}>{form.heure}</strong> — {form.couverts} couvert{form.couverts>1?"s":""}
         </div>
         <div style={{ background:"rgba(255,255,255,0.08)", borderRadius:12, padding:"14px 18px", marginBottom:24, fontSize:13, color:"rgba(255,255,255,0.6)", lineHeight:1.6 }}>
           📍 3 Boulevard Gilibert, 13009 Marseille<br/>
@@ -167,8 +167,8 @@ export default function App() {
       {/* Progress bar */}
       <div style={{ background:"#fff", borderBottom:"1px solid #e0d4c4", padding:"12px 20px" }}>
         <div style={{ display:"flex", gap:4, maxWidth:480, margin:"0 auto" }}>
-          {["Date", "Service", "Espace", "Couverts", "Infos"].map((s, i) => {
-            const stepKeys = ["date","service","espace","couverts","infos"];
+          {["Date", "Service", "Couverts", "Infos"].map((s, i) => {
+            const stepKeys = ["date","service","couverts","infos"];
             const current = STEPS.indexOf(step);
             const done = current > i;
             const active = current === i;
@@ -222,7 +222,7 @@ export default function App() {
               }
               return true;
             }).map(h => (
-                <button key={h} onClick={() => { update("heure", h); update("service", "midi"); setStep("espace"); }} style={{
+                <button key={h} onClick={() => { update("heure", h); update("service", "midi"); setStep("couverts"); }} style={{
                   background: form.heure===h ? "linear-gradient(135deg,#d4195a,#FF2D78)" : "#fff",
                   border:`1px solid ${form.heure===h?"#FF2D78":"#e0d4c4"}`,
                   borderRadius:8, padding:"10px 0", cursor:"pointer",
@@ -247,7 +247,7 @@ export default function App() {
               }
               return true;
             }).map(h => (
-                <button key={h} onClick={() => { update("heure", h); update("service", "soir"); setStep("espace"); }} style={{
+                <button key={h} onClick={() => { update("heure", h); update("service", "soir"); setStep("couverts"); }} style={{
                   background: form.heure===h ? "linear-gradient(135deg,#d4195a,#FF2D78)" : "#fff",
                   border:`1px solid ${form.heure===h?"#FF2D78":"#e0d4c4"}`,
                   borderRadius:8, padding:"10px 0", cursor:"pointer",
@@ -268,36 +268,11 @@ export default function App() {
         </>}
 
         {/* ── ÉTAPE 3 : ESPACE ── */}
-        {step==="espace" && <>
-          <div style={{ fontSize:18, fontWeight:800, marginBottom:2 }}>Choisissez votre espace</div>
-          <div style={{ fontSize:13, color:"#7a6555", marginBottom:16 }}>{formatDate(form.date)} à {form.heure}</div>
-          <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-            {[
-              { name:"Salle", icon:"🏠", desc:"Espace principal, climatisé" },
-              { name:"Véranda", icon:"🌿", desc:"Lumière naturelle, vue sur l'extérieur" },
-              { name:"Patio", icon:"☀️", desc:"En plein air, ambiance conviviale" },
-            ].map(e => (
-              <button key={e.name} onClick={() => { update("espace", e.name); setStep("couverts"); }} style={{
-                background: form.espace===e.name ? "linear-gradient(135deg,#d4195a,#FF2D78)" : "#fff",
-                border:`1px solid ${form.espace===e.name?"#FF2D78":"#e0d4c4"}`,
-                borderRadius:12, padding:"16px", cursor:"pointer", textAlign:"left",
-                color: form.espace===e.name?"#fff":"#1a0f08",
-                fontFamily:"inherit", transition:"all 0.15s"
-              }}>
-                <div style={{ fontSize:22, marginBottom:4 }}>{e.icon}</div>
-                <div style={{ fontSize:15, fontWeight:700 }}>{e.name}</div>
-                <div style={{ fontSize:12, opacity:0.8, marginTop:2 }}>{e.desc}</div>
-              </button>
-            ))}
-          </div>
-
-          <button onClick={() => setStep("service")} style={{ marginTop:16, background:"none", border:"none", color:"#FF2D78", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>← Retour</button>
-        </>}
 
         {/* ── ÉTAPE 4 : COUVERTS ── */}
         {step==="couverts" && <>
           <div style={{ fontSize:18, fontWeight:800, marginBottom:2 }}>Combien de personnes ?</div>
-          <div style={{ fontSize:13, color:"#7a6555", marginBottom:16 }}>{formatDate(form.date)} · {form.heure} · {form.espace}</div>
+          <div style={{ fontSize:13, color:"#7a6555", marginBottom:16 }}>{formatDate(form.date)} · {form.heure}</div>
 
           <div style={{ display:"grid", gridTemplateColumns:"repeat(5,1fr)", gap:8, marginBottom:16 }}>
             {[1,2,3,4,5,6,7,8,9,10].map(n => (
@@ -362,14 +337,14 @@ export default function App() {
             boxShadow: form.couverts?"0 4px 14px rgba(255,45,120,0.4)":"none"
           }}>Continuer →</button>
 
-          <button onClick={() => setStep("espace")} style={{ marginTop:12, width:"100%", background:"none", border:"none", color:"#FF2D78", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>← Retour</button>
+          <button onClick={() => setStep("service")} style={{ marginTop:12, width:"100%", background:"none", border:"none", color:"#FF2D78", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>← Retour</button>
         </>}
 
         {/* ── ÉTAPE 5 : INFOS CLIENT ── */}
         {step==="infos" && <>
           <div style={{ fontSize:18, fontWeight:800, marginBottom:2 }}>Vos coordonnées</div>
           <div style={{ fontSize:13, color:"#7a6555", marginBottom:16 }}>
-            {formatDate(form.date)} · {form.heure} · {form.espace} · {form.couverts} couvert{form.couverts>1?"s":""}
+            {formatDate(form.date)} · {form.heure} · {form.couverts} couvert{form.couverts>1?"s":""}
             {form.enfants > 0 ? ` · 👶 ${form.enfants} enfant${form.enfants > 1 ? "s" : ""}` : ""}{form.animaux ? " · 🐾" : ""}
           </div>
 

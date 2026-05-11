@@ -72,7 +72,6 @@ export default function App() {
     telephone: "",
   });
   const [loading, setLoading] = useState(false);
-  const [espacesDispos, setEspacesDispos] = useState({ "Salle": false, "Véranda": true, "Patio": true });
   const [occupiedSlots, setOccupiedSlots] = useState({});
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
@@ -89,22 +88,6 @@ export default function App() {
       setOccupiedSlots(counts);
     }
   };
-
-  // Fetch espaces when date changes
-  useEffect(() => {
-    if (!form.date) return;
-    const fetchEspaces = async () => {
-      const dateKey = "espaces_" + formatDateISO(form.date);
-      try {
-        const { data } = await supabase.from("settings").select("value").eq("key", dateKey).single();
-        if (data) setEspacesDispos(data.value);
-        else setEspacesDispos({ "Salle": false, "Véranda": true, "Patio": true });
-      } catch {
-        setEspacesDispos({ "Salle": false, "Véranda": true, "Patio": true });
-      }
-    };
-    fetchEspaces();
-  }, [form.date]);
 
   const dates = getDatesDisponibles();
 
@@ -293,7 +276,7 @@ export default function App() {
               { name:"Salle", icon:"🏠", desc:"Espace principal, climatisé" },
               { name:"Véranda", icon:"🌿", desc:"Lumière naturelle, vue sur l'extérieur" },
               { name:"Patio", icon:"☀️", desc:"En plein air, ambiance conviviale" },
-            ].filter(e => espacesDispos[e.name]).map(e => (
+            ].map(e => (
               <button key={e.name} onClick={() => { update("espace", e.name); setStep("couverts"); }} style={{
                 background: form.espace===e.name ? "linear-gradient(135deg,#d4195a,#FF2D78)" : "#fff",
                 border:`1px solid ${form.espace===e.name?"#FF2D78":"#e0d4c4"}`,

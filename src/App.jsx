@@ -11,14 +11,36 @@ const JOURS = ["Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
 const CRENEAUX_MIDI = ["12:00","12:15","12:30","12:45","13:00","13:15","13:30","13:45"];
 const CRENEAUX_SOIR = ["19:30","19:45","20:00","20:15","20:30","20:45","21:00","21:15","21:30","21:45"];
 
+// Vérifie si un service est encore disponible aujourd'hui (cutoff 30min avant)
+function serviceDisponibleAujourdhui(service) {
+  const now = new Date();
+  const cutoff = new Date();
+  if (service === "midi") {
+    cutoff.setHours(11, 45, 0); // cutoff midi
+  } else {
+    cutoff.setHours(19, 15, 0); // cutoff soir
+  }
+  return now < cutoff;
+}
+
 // Génère les dates disponibles J+1 à J+15, mardi au samedi
+// J+0 (aujourd'hui) inclus seulement si un service est encore dispo
 function getDatesDisponibles() {
   const dates = [];
   const today = new Date();
+  
+  // Vérifier si aujourd'hui est un jour ouvert et a encore des services dispos
+  const jourAujourdhui = today.getDay();
+  if (jourAujourdhui >= 2 && jourAujourdhui <= 6) {
+    if (serviceDisponibleAujourdhui("midi") || serviceDisponibleAujourdhui("soir")) {
+      dates.push(new Date(today));
+    }
+  }
+
   for (let i = 1; i <= 15; i++) {
     const d = new Date(today);
     d.setDate(today.getDate() + i);
-    const jour = d.getDay(); // 0=dim, 1=lun, 2=mar, 3=mer, 4=jeu, 5=ven, 6=sam
+    const jour = d.getDay();
     if (jour >= 2 && jour <= 6) dates.push(d);
   }
   return dates;
@@ -185,7 +207,16 @@ export default function App() {
           <div style={{ marginBottom:20 }}>
             <div style={{ fontSize:13, fontWeight:700, color:"#7a6555", marginBottom:8, textTransform:"uppercase", letterSpacing:"1px" }}>🌞 Midi — 12h à 13h45</div>
             <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:6 }}>
-              {CRENEAUX_MIDI.filter(h => (occupiedSlots[h] || 0) < 5).map(h => (
+              {CRENEAUX_MIDI.filter(h => {
+              if ((occupiedSlots[h] || 0) >= 5) return false;
+              // Bloquer tout le service midi à partir de 11h45
+              if (form.date && formatDateISO(form.date) === formatDateISO(new Date())) {
+                const now = new Date();
+                const cutoff = new Date(); cutoff.setHours(11, 45, 0);
+                if (now >= cutoff) return false;
+              }
+              return true;
+            }).map(h => (
                 <button key={h} onClick={() => { update("heure", h); update("service", "midi"); setStep("espace"); }} style={{
                   background: form.heure===h ? "linear-gradient(135deg,#d4195a,#FF2D78)" : "#fff",
                   border:`1px solid ${form.heure===h?"#FF2D78":"#e0d4c4"}`,
@@ -201,7 +232,16 @@ export default function App() {
           <div>
             <div style={{ fontSize:13, fontWeight:700, color:"#7a6555", marginBottom:8, textTransform:"uppercase", letterSpacing:"1px" }}>🌙 Soir — 19h30 à 21h45</div>
             <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:6 }}>
-              {CRENEAUX_SOIR.filter(h => (occupiedSlots[h] || 0) < 5).map(h => (
+              {CRENEAUX_SOIR.filter(h => {
+              if ((occupiedSlots[h] || 0) >= 5) return false;
+              // Bloquer tout le service soir à partir de 19h15
+              if (form.date && formatDateISO(form.date) === formatDateISO(new Date())) {
+                const now = new Date();
+                const cutoff = new Date(); cutoff.setHours(19, 15, 0);
+                if (now >= cutoff) return false;
+              }
+              return true;
+            }).map(h => (
                 <button key={h} onClick={() => { update("heure", h); update("service", "soir"); setStep("espace"); }} style={{
                   background: form.heure===h ? "linear-gradient(135deg,#d4195a,#FF2D78)" : "#fff",
                   border:`1px solid ${form.heure===h?"#FF2D78":"#e0d4c4"}`,
@@ -216,7 +256,7 @@ export default function App() {
           {CRENEAUX_MIDI.filter(h => (occupiedSlots[h] || 0) < 5).length === 0 && CRENEAUX_SOIR.filter(h => (occupiedSlots[h] || 0) < 5).length === 0 && (
             <div style={{ background:"rgba(255,45,120,0.06)", border:"1px solid rgba(255,45,120,0.2)", borderRadius:10, padding:"14px", textAlign:"center", fontSize:13, color:"#7a6555", marginBottom:16 }}>
               😔 Tous les créneaux sont complets pour cette date.<br/>
-              <strong style={{color:"#FF2D78"}}>Appelez-nous pour vérifier les disponibilités.</strong>
+              <strong style={{color:"#FF2D78"}}>Appelez-nous au 04 91 75 18 06</strong>
             </div>
           )}
           <button onClick={() => setStep("date")} style={{ marginTop:20, background:"none", border:"none", color:"#FF2D78", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>← Retour</button>

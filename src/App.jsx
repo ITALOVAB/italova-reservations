@@ -90,15 +90,21 @@ export default function App() {
     }
   };
 
+  // Fetch espaces when date changes
   useEffect(() => {
+    if (!form.date) return;
     const fetchEspaces = async () => {
+      const dateKey = "espaces_" + formatDateISO(form.date);
       try {
-        const { data } = await supabase.from("settings").select("value").eq("key","espaces_disponibles").single();
+        const { data } = await supabase.from("settings").select("value").eq("key", dateKey).single();
         if (data) setEspacesDispos(data.value);
-      } catch {}
+        else setEspacesDispos({ "Salle": false, "Véranda": true, "Patio": true });
+      } catch {
+        setEspacesDispos({ "Salle": false, "Véranda": true, "Patio": true });
+      }
     };
     fetchEspaces();
-  }, []);
+  }, [form.date]);
 
   const dates = getDatesDisponibles();
 

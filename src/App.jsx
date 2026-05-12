@@ -315,8 +315,8 @@ export default function App() {
             }}>
               <span style={{ fontSize:22 }}>🐾</span>
               <div>
-                <div style={{ fontSize:13, fontWeight:700 }}>Animal de compagnie</div>
-                <div style={{ fontSize:11, opacity:0.8 }}>Acceptés en terrasse</div>
+                <div style={{ fontSize:13, fontWeight:700 }}>🐾 J'amène mon animal de compagnie</div>
+                <div style={{ fontSize:11, opacity:0.8, marginTop:2 }}>Acceptés · merci de vous assurer qu'il reste calme et sous la table</div>
               </div>
               <span style={{ marginLeft:"auto", fontSize:16 }}>{form.animaux ? "✓" : ""}</span>
             </button>
@@ -324,7 +324,7 @@ export default function App() {
 
           {/* Commentaire */}
           <div style={{ marginBottom:20 }}>
-            <textarea placeholder="Précisions : ombre souhaité, poussette, fauteuil roulant, allergie..." value={form.commentaire}
+            <textarea placeholder="Allergie, régime spécifique, fauteuil roulant, poussette, siège bébé, placement souhaité..." value={form.commentaire}
               onChange={e => update("commentaire", e.target.value)} rows={3}
               style={{ width:"100%", background:"#fff", border:"1px solid #e0d4c4", borderRadius:10, padding:"10px 13px", color:"#1a0f08", fontSize:13, outline:"none", resize:"none", boxSizing:"border-box", fontFamily:"inherit" }}/>
           </div>

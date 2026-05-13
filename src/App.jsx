@@ -277,6 +277,8 @@ export default function App() {
             <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:6 }}>
               {CRENEAUX_MIDI.filter(h => {
               if ((occupiedSlots[h] || 0) >= 5) return false;
+              // Pas de contrainte de créneau pour la fête des mères
+              if (form.date && formatDateISO(form.date) === "2026-05-31") return true;
               // Bloquer tout le service midi à partir de 11h45
               if (form.date && formatDateISO(form.date) === formatDateISO(new Date())) {
                 const now = new Date();
@@ -297,7 +299,7 @@ export default function App() {
           </div>
 
           {/* Soir */}
-          <div>
+          {!(form.date && formatDateISO(form.date) === "2026-05-31") && <div>
             <div style={{ fontSize:13, fontWeight:700, color:"#7a6555", marginBottom:8, textTransform:"uppercase", letterSpacing:"1px" }}>🌙 Soir — 19h30 à 21h45</div>
             <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:6 }}>
               {CRENEAUX_SOIR.filter(h => {

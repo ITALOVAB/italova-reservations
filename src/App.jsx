@@ -8,8 +8,8 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 const ESPACES = ["Salle", "Véranda", "Patio"];
 const JOURS = ["Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
 
-const CRENEAUX_MIDI = ["12:00","12:15","12:30","12:45","13:00","13:15","13:30","13:45"];
-const CRENEAUX_SOIR = ["19:30","19:45","20:00","20:15","20:30","20:45","21:00","21:15","21:30","21:45"];
+const CRENEAUX_MIDI = ["12:00","12:15","12:30","12:45","13:00","13:15","13:30"];
+const CRENEAUX_SOIR = ["19:30","19:45","20:00","20:15","20:30","20:45","21:00","21:15","21:30"];
 
 // Vérifie si un service est encore disponible aujourd'hui (cutoff 30min avant)
 function serviceDisponibleAujourdhui(service) {
@@ -37,7 +37,7 @@ function getDatesDisponibles() {
     }
   }
 
-  for (let i = 1; i <= 15; i++) {
+  for (let i = 1; i <= 45; i++) {
     const d = new Date(today);
     d.setDate(today.getDate() + i);
     const jour = d.getDay();

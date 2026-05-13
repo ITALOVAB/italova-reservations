@@ -187,7 +187,7 @@ export default function App() {
         {/* ── ÉTAPE 1 : DATE ── */}
         {step==="date" && <>
           <div style={{ fontSize:18, fontWeight:800, marginBottom:6 }}>Choisissez une date</div>
-          <div style={{ fontSize:13, color:"#7a6555", marginBottom:16 }}>Disponible du mardi au samedi, jusqu'à 15 jours à l'avance</div>
+          <div style={{ fontSize:13, color:"#7a6555", marginBottom:16 }}>Disponible du mardi au samedi, jusqu'à 45 jours à l'avance</div>
           <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
             {dates.map((d, i) => (
               <button key={i} onClick={() => { update("date", d); fetchOccupied(d); setStep("service"); }} style={{

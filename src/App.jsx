@@ -189,6 +189,34 @@ export default function App() {
           <div style={{ fontSize:18, fontWeight:800, marginBottom:4 }}>Choisissez une date</div>
           <div style={{ fontSize:13, color:"#7a6555", marginBottom:16 }}>Disponible du mardi au samedi, jusqu'à 45 jours à l'avance</div>
 
+          {/* Date exceptionnelle — Fête des Mères */}
+          {(() => {
+            const feteMeres = new Date(2026, 4, 31); // Dimanche 31 mai 2026
+            const today = new Date();
+            const isAvailable = feteMeres > today;
+            if (!isAvailable) return null;
+            const selected = form.date && formatDateISO(form.date)===formatDateISO(feteMeres);
+            return (
+              <button onClick={()=>{ update("date", feteMeres); fetchOccupied(feteMeres); setStep("service"); }} style={{
+                width:"100%", background: selected?"linear-gradient(135deg,#d4195a,#FF2D78)":"linear-gradient(135deg,#fff0f5,#ffe4ef)",
+                border:`2px solid ${selected?"#FF2D78":"#ffb3cc"}`, borderRadius:14, padding:"14px 16px",
+                cursor:"pointer", fontFamily:"inherit", marginBottom:20, textAlign:"left",
+                boxShadow: selected?"0 4px 16px rgba(255,45,120,0.4)":"0 2px 8px rgba(255,45,120,0.1)",
+                transition:"all 0.15s"
+              }}>
+                <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                  <span style={{ fontSize:28 }}>🌸</span>
+                  <div>
+                    <div style={{ fontSize:13, fontWeight:800, color:selected?"#fff":"#FF2D78", letterSpacing:"0.5px" }}>Ouverture exceptionnelle</div>
+                    <div style={{ fontSize:15, fontWeight:800, color:selected?"#fff":"#1a0f08", marginTop:2 }}>Dimanche 31 mai — Fête des Mères</div>
+                    <div style={{ fontSize:11, color:selected?"rgba(255,255,255,0.8)":"#9a8575", marginTop:3 }}>Service du midi uniquement</div>
+                  </div>
+                  {selected && <span style={{ marginLeft:"auto", fontSize:20 }}>✓</span>}
+                </div>
+              </button>
+            );
+          })()}
+
           {/* Grouper par semaine */}
           {(() => {
             const weeks = {};

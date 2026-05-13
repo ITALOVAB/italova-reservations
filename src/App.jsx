@@ -186,21 +186,56 @@ export default function App() {
 
         {/* ── ÉTAPE 1 : DATE ── */}
         {step==="date" && <>
-          <div style={{ fontSize:18, fontWeight:800, marginBottom:6 }}>Choisissez une date</div>
+          <div style={{ fontSize:18, fontWeight:800, marginBottom:4 }}>Choisissez une date</div>
           <div style={{ fontSize:13, color:"#7a6555", marginBottom:16 }}>Disponible du mardi au samedi, jusqu'à 45 jours à l'avance</div>
-          <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
-            {dates.map((d, i) => (
-              <button key={i} onClick={() => { update("date", d); fetchOccupied(d); setStep("service"); }} style={{
-                background: form.date && formatDateISO(form.date)===formatDateISO(d) ? "linear-gradient(135deg,#d4195a,#FF2D78)" : "#fff",
-                border: `1px solid ${form.date && formatDateISO(form.date)===formatDateISO(d) ? "#FF2D78" : "#e0d4c4"}`,
-                borderRadius:10, padding:"14px 16px", cursor:"pointer", textAlign:"left",
-                color: form.date && formatDateISO(form.date)===formatDateISO(d) ? "#fff" : "#1a0f08",
-                fontSize:14, fontWeight:600, fontFamily:"inherit", transition:"all 0.15s"
-              }}>
-                {formatDate(d)}
-              </button>
-            ))}
-          </div>
+
+          {/* Grouper par semaine */}
+          {(() => {
+            const weeks = {};
+            dates.forEach(d => {
+              const monday = new Date(d);
+              monday.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+              const key = monday.toISOString().split("T")[0];
+              if (!weeks[key]) weeks[key] = [];
+              weeks[key].push(d);
+            });
+
+            const JOURS_COURTS = ["","Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
+            const MOIS = ["jan","fév","mar","avr","mai","jun","jul","aoû","sep","oct","nov","déc"];
+
+            return Object.entries(weeks).map(([weekKey, weekDates]) => (
+              <div key={weekKey} style={{ marginBottom:16 }}>
+                <div style={{ fontSize:10, fontWeight:700, color:"#9a8575", textTransform:"uppercase", letterSpacing:"2px", marginBottom:8 }}>
+                  Semaine du {new Date(weekKey).getDate()} {MOIS[new Date(weekKey).getMonth()]}
+                </div>
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(5,1fr)", gap:6 }}>
+                  {weekDates.map((d, i) => {
+                    const selected = form.date && formatDateISO(form.date)===formatDateISO(d);
+                    return (
+                      <button key={i} onClick={() => { update("date", d); fetchOccupied(d); setStep("service"); }} style={{
+                        background: selected ? "linear-gradient(135deg,#d4195a,#FF2D78)" : "#fff",
+                        border: `1px solid ${selected ? "#FF2D78" : "#e0d4c4"}`,
+                        borderRadius:10, padding:"10px 4px", cursor:"pointer", textAlign:"center",
+                        color: selected ? "#fff" : "#1a0f08",
+                        fontFamily:"inherit", transition:"all 0.15s",
+                        boxShadow: selected ? "0 4px 12px rgba(255,45,120,0.3)" : "none"
+                      }}>
+                        <div style={{ fontSize:10, fontWeight:600, opacity:selected?0.85:1, color:selected?"#fff":"#9a8575", marginBottom:4 }}>
+                          {JOURS_COURTS[d.getDay()]}
+                        </div>
+                        <div style={{ fontSize:18, fontWeight:800, lineHeight:1 }}>
+                          {d.getDate()}
+                        </div>
+                        <div style={{ fontSize:10, marginTop:3, opacity:selected?0.85:1, color:selected?"#fff":"#9a8575" }}>
+                          {MOIS[d.getMonth()]}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ));
+          })()}
         </>}
 
         {/* ── ÉTAPE 2 : SERVICE + HEURE ── */}

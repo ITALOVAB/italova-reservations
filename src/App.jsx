@@ -321,7 +321,7 @@ export default function App() {
                 }}>{h}</button>
               ))}
             </div>
-          </div>
+          </div>}
 
           {CRENEAUX_MIDI.filter(h => (occupiedSlots[h] || 0) < 5).length === 0 && CRENEAUX_SOIR.filter(h => (occupiedSlots[h] || 0) < 5).length === 0 && (
             <div style={{ background:"rgba(255,45,120,0.06)", border:"1px solid rgba(255,45,120,0.2)", borderRadius:10, padding:"14px", textAlign:"center", fontSize:13, color:"#7a6555", marginBottom:16 }}>

@@ -189,6 +189,31 @@ export default function App() {
 
         {/* ── ÉTAPE 1 : DATE ── */}
         {step==="date" && <>
+          {/* Message jour fermé */}
+          {(() => {
+            const today = new Date();
+            const jour = today.getDay(); // 0=dim, 1=lun
+            const isClosed = jour === 0 || jour === 1;
+            if (!isClosed) return null;
+            const jourNom = jour === 0 ? "dimanche" : "lundi";
+            return (
+              <div style={{ background:"linear-gradient(135deg,#1a0515,#2d0a20)", borderRadius:14, padding:"20px 16px", marginBottom:20, textAlign:"center" }}>
+                <div style={{ fontSize:28, marginBottom:8 }}>🌙</div>
+                <div style={{ fontSize:16, fontWeight:800, color:"#fff", marginBottom:6 }}>
+                  Italova est fermé le {jourNom}
+                </div>
+                <div style={{ fontSize:13, color:"rgba(255,255,255,0.7)", marginBottom:16, lineHeight:1.6 }}>
+                  Nous sommes ouverts du <strong style={{color:"#FF2D78"}}>mardi au samedi</strong>,<br/>
+                  midi et soir. À très bientôt !
+                </div>
+                <div style={{ fontSize:12, color:"rgba(255,255,255,0.5)" }}>
+                  📍 3 Boulevard Gilibert, 13009 Marseille<br/>
+                  📞 <a href="tel:0491751806" style={{color:"#FF2D78", textDecoration:"none", fontWeight:600}}>04 91 75 18 06</a>
+                </div>
+              </div>
+            );
+          })()}
+
           <div style={{ fontSize:18, fontWeight:800, marginBottom:4 }}>Choisissez une date</div>
           <div style={{ fontSize:13, color:"#7a6555", marginBottom:16 }}>Disponible du mardi au samedi, jusqu'à 45 jours à l'avance</div>
 

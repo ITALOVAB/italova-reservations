@@ -208,7 +208,7 @@ export default function App() {
                 </div>
                 <div style={{ fontSize:12, color:"rgba(255,255,255,0.5)" }}>
                   📍 3 Boulevard Gilibert, 13009 Marseille<br/>
-                  📞 <a href="tel:0491751806" style={{color:"#FF2D78", textDecoration:"none", fontWeight:600}}>04 91 75 18 06</a>
+                  📞 <span onClick={()=>{ const today=new Date(); const j=today.getDay(); if(j===0||j===1){ alert("Nous sommes fermés aujourd'hui.\nAppellez-nous du mardi au samedi,\nou réservez en ligne ci-dessous."); } else { window.location.href="tel:0491751806"; } }} style={{color:"#FF2D78", textDecoration:"none", fontWeight:600, cursor:"pointer"}}>04 91 75 18 06</span>
                 </div>
               </div>
             );
@@ -478,6 +478,7 @@ export default function App() {
       <div style={{ textAlign:"center", padding:"20px 16px 40px", fontSize:12, color:"#9a8575" }}>
         📍 3 Boulevard Gilibert, 13009 Marseille<br/>
         Mardi au Samedi · Midi 12h–14h · Soir 19h30–23h
+        <br/><a href="tel:0491751806" style={{color:"#FF2D78", textDecoration:"none"}}>04 91 75 18 06</a>
       </div>
 
       <style>{`
